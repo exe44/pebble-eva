@@ -1,4 +1,4 @@
-pebble watchface inspired by Japanese anim "Neon Genesis Evangelion" :D
+pebble watchface inspired by Japanese anime "Neon Genesis Evangelion" :D
 
 ![screenshot](https://dl.dropboxusercontent.com/u/203504/pebble-eva.jpg)
 
