@@ -1,0 +1,150 @@
+{
+  "friendlyVersion": "dev_0.0",
+  "versionDefName": "PEBBLE_EVA_RESOURCES",
+  "media": [
+
+    {
+      "type": "png",
+      "defName": "MORNING",
+      "file": "images/morning.png"
+    },
+    {
+      "type": "png",
+      "defName": "NOON",
+      "file": "images/noon.png"
+    },
+    {
+      "type": "png",
+      "defName": "NIGHT",
+      "file": "images/night.png"
+    },
+
+    {
+      "type": "png",
+      "defName": "HR_BIG",
+      "file": "images/hr_b.png"
+    },
+    {
+      "type": "png",
+      "defName": "N0_BIG",
+      "file": "images/0_b.png"
+    },
+    {
+      "type": "png",
+      "defName": "N1_BIG",
+      "file": "images/1_b.png"
+    },
+    {
+      "type": "png",
+      "defName": "N2_BIG",
+      "file": "images/2_b.png"
+    },
+    {
+      "type": "png",
+      "defName": "N3_BIG",
+      "file": "images/3_b.png"
+    },
+    {
+      "type": "png",
+      "defName": "N4_BIG",
+      "file": "images/4_b.png"
+    },
+    {
+      "type": "png",
+      "defName": "N5_BIG",
+      "file": "images/5_b.png"
+    },
+    {
+      "type": "png",
+      "defName": "N6_BIG",
+      "file": "images/6_b.png"
+    },
+    {
+      "type": "png",
+      "defName": "N7_BIG",
+      "file": "images/7_b.png"
+    },
+    {
+      "type": "png",
+      "defName": "N8_BIG",
+      "file": "images/8_b.png"
+    },
+    {
+      "type": "png",
+      "defName": "N9_BIG",
+      "file": "images/9_b.png"
+    },
+    {
+      "type": "png",
+      "defName": "N10_BIG",
+      "file": "images/10_b.png"
+    },
+
+    {
+      "type": "png",
+      "defName": "NUMBER_SMALL",
+      "file": "images/number_s.png"
+    },
+    {
+      "type": "png",
+      "defName": "MIN_SMALL",
+      "file": "images/min_s.png"
+    },
+    {
+      "type": "png",
+      "defName": "N0_SMALL",
+      "file": "images/0_s.png"
+    },
+    {
+      "type": "png",
+      "defName": "N1_SMALL",
+      "file": "images/1_s.png"
+    },
+    {
+      "type": "png",
+      "defName": "N2_SMALL",
+      "file": "images/2_s.png"
+    },
+    {
+      "type": "png",
+      "defName": "N3_SMALL",
+      "file": "images/3_s.png"
+    },
+    {
+      "type": "png",
+      "defName": "N4_SMALL",
+      "file": "images/4_s.png"
+    },
+    {
+      "type": "png",
+      "defName": "N5_SMALL",
+      "file": "images/5_s.png"
+    },
+    {
+      "type": "png",
+      "defName": "N6_SMALL",
+      "file": "images/6_s.png"
+    },
+    {
+      "type": "png",
+      "defName": "N7_SMALL",
+      "file": "images/7_s.png"
+    },
+    {
+      "type": "png",
+      "defName": "N8_SMALL",
+      "file": "images/8_s.png"
+    },
+    {
+      "type": "png",
+      "defName": "N9_SMALL",
+      "file": "images/9_s.png"
+    },
+    {
+      "type": "png",
+      "defName": "N10_SMALL",
+      "file": "images/10_s.png"
+    }
+
+  ]
+}
