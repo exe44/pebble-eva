@@ -5,7 +5,7 @@
 
 #define MY_UUID { 0x63, 0x69, 0x87, 0x66, 0xAB, 0xE7, 0x49, 0xA5, 0x90, 0x21, 0x5F, 0x57, 0xE0, 0x92, 0xC0, 0x6C }
 PBL_APP_INFO(MY_UUID,
-             "Eva", "exe",
+             "EVA", "exe",
              1, 0, /* App version */
              DEFAULT_MENU_ICON,
              APP_INFO_WATCH_FACE);
@@ -73,7 +73,7 @@ int calculate_12_format(int hr)
   return hr;
 }
 
-// Called once per second
+// Called once per minute
 void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t)
 {
   PblTm currentTime;

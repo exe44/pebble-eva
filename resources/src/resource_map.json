@@ -32,12 +32,12 @@
     {
       "type": "png",
       "defName": "N1_BIG",
-      "file": "images/1_b.png"
+      "file": "images/1_bj.png"
     },
     {
       "type": "png",
       "defName": "N2_BIG",
-      "file": "images/2_b.png"
+      "file": "images/2_bj.png"
     },
     {
       "type": "png",
@@ -98,12 +98,12 @@
     {
       "type": "png",
       "defName": "N1_SMALL",
-      "file": "images/1_s.png"
+      "file": "images/1_sj.png"
     },
     {
       "type": "png",
       "defName": "N2_SMALL",
-      "file": "images/2_s.png"
+      "file": "images/2_sj.png"
     },
     {
       "type": "png",
