@@ -1,0 +1,158 @@
+{
+  "uuid": "63698766-abe7-49a5-9021-5f57e092c06c",
+  "shortName": "EVA",
+  "longName": "EVA",
+  "companyName": "exe",
+  "versionCode": 2,
+  "versionLabel": "2.0.0",
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {},
+  "resources": {
+    "media": [
+      {
+        "type": "png",
+        "name": "MORNING",
+        "file": "images/morning.png"
+      },
+      {
+        "type": "png",
+        "name": "NOON",
+        "file": "images/noon.png"
+      },
+      {
+        "type": "png",
+        "name": "NIGHT",
+        "file": "images/night.png"
+      },
+
+      {
+        "type": "png",
+        "name": "HR_BIG",
+        "file": "images/hr_b.png"
+      },
+      {
+        "type": "png",
+        "name": "N0_BIG",
+        "file": "images/0_b.png"
+      },
+      {
+        "type": "png",
+        "name": "N1_BIG",
+        "file": "images/1_bj.png"
+      },
+      {
+        "type": "png",
+        "name": "N2_BIG",
+        "file": "images/2_bj.png"
+      },
+      {
+        "type": "png",
+        "name": "N3_BIG",
+        "file": "images/3_b.png"
+      },
+      {
+        "type": "png",
+        "name": "N4_BIG",
+        "file": "images/4_b.png"
+      },
+      {
+        "type": "png",
+        "name": "N5_BIG",
+        "file": "images/5_b.png"
+      },
+      {
+        "type": "png",
+        "name": "N6_BIG",
+        "file": "images/6_b.png"
+      },
+      {
+        "type": "png",
+        "name": "N7_BIG",
+        "file": "images/7_b.png"
+      },
+      {
+        "type": "png",
+        "name": "N8_BIG",
+        "file": "images/8_b.png"
+      },
+      {
+        "type": "png",
+        "name": "N9_BIG",
+        "file": "images/9_b.png"
+      },
+      {
+        "type": "png",
+        "name": "N10_BIG",
+        "file": "images/10_b.png"
+      },
+
+      {
+        "type": "png",
+        "name": "NUMBER_SMALL",
+        "file": "images/number_s.png"
+      },
+      {
+        "type": "png",
+        "name": "MIN_SMALL",
+        "file": "images/min_s.png"
+      },
+      {
+        "type": "png",
+        "name": "N0_SMALL",
+        "file": "images/0_s.png"
+      },
+      {
+        "type": "png",
+        "name": "N1_SMALL",
+        "file": "images/1_sj.png"
+      },
+      {
+        "type": "png",
+        "name": "N2_SMALL",
+        "file": "images/2_sj.png"
+      },
+      {
+        "type": "png",
+        "name": "N3_SMALL",
+        "file": "images/3_s.png"
+      },
+      {
+        "type": "png",
+        "name": "N4_SMALL",
+        "file": "images/4_s.png"
+      },
+      {
+        "type": "png",
+        "name": "N5_SMALL",
+        "file": "images/5_s.png"
+      },
+      {
+        "type": "png",
+        "name": "N6_SMALL",
+        "file": "images/6_s.png"
+      },
+      {
+        "type": "png",
+        "name": "N7_SMALL",
+        "file": "images/7_s.png"
+      },
+      {
+        "type": "png",
+        "name": "N8_SMALL",
+        "file": "images/8_s.png"
+      },
+      {
+        "type": "png",
+        "name": "N9_SMALL",
+        "file": "images/9_s.png"
+      },
+      {
+        "type": "png",
+        "name": "N10_SMALL",
+        "file": "images/10_s.png"
+      }
+    ]
+  }
+}

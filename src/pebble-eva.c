@@ -1,41 +1,43 @@
-#include "pebble_os.h"
-#include "pebble_app.h"
-#include "pebble_fonts.h"
-
-
-#define MY_UUID { 0x63, 0x69, 0x87, 0x66, 0xAB, 0xE7, 0x49, 0xA5, 0x90, 0x21, 0x5F, 0x57, 0xE0, 0x92, 0xC0, 0x6C }
-PBL_APP_INFO(MY_UUID,
-             "EVA", "exe",
-             1, 0, /* App version */
-             DEFAULT_MENU_ICON,
-             APP_INFO_WATCH_FACE);
+#include <pebble.h>
 
 #define BIG_W 40
 #define BIG_H 48
 #define SMALL_W 20
 #define SMALL_H 24
 
-Window window;
+static Window *window;
 
-BmpContainer img_morning, img_noon, img_night;
+static GBitmap *img_morning, *img_noon, *img_night;
+static BitmapLayer *period_layer;
 
-BmpContainer img_number;
+//
 
-BmpContainer img_hr;
-BmpContainer img_hr_numbers[11];
-BitmapLayer hr_digits[3];
+static GBitmap *img_hr_numbers[11];
+static BitmapLayer *hr_digits[3];
 
-BmpContainer img_min;
-BmpContainer img_min_numbers[11];
-BitmapLayer min_digits[3];
+static GBitmap *img_hr;
+static BitmapLayer *hr_layer;
 
-int current_hr = -1;
-int current_min = -1;
+//
 
-int digit_used;
-int digit_idxs[3];
+static GBitmap *img_min_prefix;
+static BitmapLayer *min_prefix_layer;
 
-void calulate_digit_idxs(int num)
+static GBitmap *img_min_numbers[11];
+static BitmapLayer *min_digits[3];
+
+static GBitmap *img_min;
+static BitmapLayer *min_layer;
+
+//
+
+static int current_hr = -1;
+static int current_min = -1;
+
+static int digit_used;
+static int digit_idxs[3];
+
+static void calulate_digit_idxs(int num)
 {
   digit_used = 1;
 
@@ -66,203 +68,224 @@ void calulate_digit_idxs(int num)
   }
 }
 
-int calculate_12_format(int hr)
+static int calculate_12_format(int hr)
 {
   if (hr == 0) hr += 12;
   if (hr > 12) hr -= 12;
   return hr;
 }
 
-// Called once per minute
-void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t)
+static void handle_minute_tick(struct tm* time, TimeUnits units_changed)
 {
-  PblTm currentTime;
-  get_time(&currentTime);
+  Layer* window_layer = window_get_root_layer(window);
+  GRect bounds = layer_get_frame(window_layer);
 
-  if (current_hr != currentTime.tm_hour)
+  Layer* layer;
+
+  if (current_hr != time->tm_hour)
   {
-    current_hr = currentTime.tm_hour;
+    current_hr = time->tm_hour;
+
+    //
+
+    layer = bitmap_layer_get_layer(period_layer);
 
     if (current_hr >= 5 && current_hr < 12)
-    {
-      layer_set_hidden(&img_morning.layer.layer, false);
-      layer_set_hidden(&img_noon.layer.layer, true);
-      layer_set_hidden(&img_night.layer.layer, true);
-    }
+      bitmap_layer_set_bitmap(period_layer, img_morning);
     else if (current_hr >= 12 && current_hr < 19)
-    {
-      layer_set_hidden(&img_morning.layer.layer, true);
-      layer_set_hidden(&img_noon.layer.layer, false);
-      layer_set_hidden(&img_night.layer.layer, true);
-    }
+      bitmap_layer_set_bitmap(period_layer, img_noon);
     else
-    {
-      layer_set_hidden(&img_morning.layer.layer, true);
-      layer_set_hidden(&img_noon.layer.layer, true);
-      layer_set_hidden(&img_night.layer.layer, false);
-    }
+      bitmap_layer_set_bitmap(period_layer, img_night);
+
+    layer_mark_dirty(layer);
+
+    //
 
     calulate_digit_idxs(calculate_12_format(current_hr));
 
     for (int i = 0; i < 3; ++i)
     {
+      layer = bitmap_layer_get_layer(hr_digits[i]);
+
       if (i < digit_used)
       {
-        layer_set_hidden(&hr_digits[i].layer, false);
+        layer_set_hidden(layer, false);
 
-        bitmap_layer_set_bitmap(&hr_digits[i], &img_hr_numbers[digit_idxs[i]].bmp);
-        layer_set_frame(&hr_digits[i].layer, GRect(144 - BIG_W * (2 - i), 0, BIG_W, BIG_H));
-        layer_mark_dirty(&hr_digits[i].layer);
+        bitmap_layer_set_bitmap(hr_digits[i], img_hr_numbers[digit_idxs[i]]);
+        layer_set_frame(layer, GRect(bounds.size.w - BIG_W * (2 - i), 0, BIG_W, BIG_H));
+        layer_mark_dirty(layer);
       }
       else
       {
-        layer_set_hidden(&hr_digits[i].layer, true);
+        layer_set_hidden(layer, true);
       }
     }
 
-    layer_set_frame(&img_hr.layer.layer, GRect(144 - BIG_W, digit_used > 1 ? BIG_H : 0, BIG_W, BIG_H));
-    layer_mark_dirty(&img_hr.layer.layer);
+    //
+
+    layer = bitmap_layer_get_layer(hr_layer);
+    layer_set_frame(layer, GRect(bounds.size.w - BIG_W, digit_used > 1 ? BIG_H : 0, BIG_W, BIG_H));
+    layer_mark_dirty(layer);
   }
 
   //
 
-  if (current_min != currentTime.tm_min)
+  if (current_min != time->tm_min)
   {
-    current_min = currentTime.tm_min;
+    current_min = time->tm_min;
 
-    calulate_digit_idxs(currentTime.tm_min);
+    //
+
+    calulate_digit_idxs(time->tm_min);
 
     for (int i = 0; i < 3; ++i)
     {
+      layer = bitmap_layer_get_layer(min_digits[i]);
+
       if (i < digit_used)
       {
-        layer_set_hidden(&min_digits[i].layer, false);
+        layer_set_hidden(layer, false);
 
-        bitmap_layer_set_bitmap(&min_digits[i], &img_min_numbers[digit_idxs[i]].bmp);
-        layer_set_frame(&min_digits[i].layer, GRect(SMALL_W * (1 + i), 168 - SMALL_H, SMALL_W, SMALL_H));
-        layer_mark_dirty(&min_digits[i].layer);
-
+        bitmap_layer_set_bitmap(min_digits[i], img_min_numbers[digit_idxs[i]]);
+        layer_set_frame(layer, GRect(SMALL_W * (1 + i), bounds.size.h - SMALL_H, SMALL_W, SMALL_H));
+        layer_mark_dirty(layer);
       }
       else
       {
-        layer_set_hidden(&min_digits[i].layer, true);
+        layer_set_hidden(layer, true);
       }
     }
 
-    layer_set_frame(&img_min.layer.layer, GRect(SMALL_W * (1 + digit_used), 168 - SMALL_H, SMALL_W, SMALL_H));
-    layer_mark_dirty(&img_min.layer.layer);
-  }
+    //
 
+    layer = bitmap_layer_get_layer(min_layer);
+    layer_set_frame(layer, GRect(SMALL_W * (1 + digit_used), bounds.size.h - SMALL_H, SMALL_W, SMALL_H));
+    layer_mark_dirty(layer);
+  }
 }
 
-void handle_init(AppContextRef ctx)
+static void window_load(Window* window)
 {
-  (void)ctx;
-
-  window_init(&window, "Eva");
-  window_stack_push(&window, true /* Animated */);
-  window_set_background_color(&window, GColorBlack);
-
-  resource_init_current_app(&PEBBLE_EVA_RESOURCES);
+  Layer* window_layer = window_get_root_layer(window);
+  GRect bounds = layer_get_frame(window_layer);
 
   //
 
-  bmp_init_container(RESOURCE_ID_MORNING, &img_morning);
-  bmp_init_container(RESOURCE_ID_NOON, &img_noon);
-  bmp_init_container(RESOURCE_ID_NIGHT, &img_night);
-  layer_add_child(&window.layer, &img_morning.layer.layer);
-  layer_add_child(&window.layer, &img_noon.layer.layer);
-  layer_add_child(&window.layer, &img_night.layer.layer);
+  img_morning = gbitmap_create_with_resource(RESOURCE_ID_MORNING);
+  img_noon = gbitmap_create_with_resource(RESOURCE_ID_NOON);
+  img_night = gbitmap_create_with_resource(RESOURCE_ID_NIGHT);
+
+  period_layer = bitmap_layer_create(GRect(0, 0, img_morning->bounds.size.w, img_morning->bounds.size.h));
+  layer_add_child(window_layer, bitmap_layer_get_layer(period_layer));
 
   //
 
-  bmp_init_container(RESOURCE_ID_NUMBER_SMALL, &img_number);
-  layer_set_frame(&img_number.layer.layer, GRect(0, 168 - SMALL_H, SMALL_W, SMALL_H));
-  layer_add_child(&window.layer, &img_number.layer.layer);
+  img_hr_numbers[0] = gbitmap_create_with_resource(RESOURCE_ID_N0_BIG);
+  img_hr_numbers[1] = gbitmap_create_with_resource(RESOURCE_ID_N1_BIG);
+  img_hr_numbers[2] = gbitmap_create_with_resource(RESOURCE_ID_N2_BIG);
+  img_hr_numbers[3] = gbitmap_create_with_resource(RESOURCE_ID_N3_BIG);
+  img_hr_numbers[4] = gbitmap_create_with_resource(RESOURCE_ID_N4_BIG);
+  img_hr_numbers[5] = gbitmap_create_with_resource(RESOURCE_ID_N5_BIG);
+  img_hr_numbers[6] = gbitmap_create_with_resource(RESOURCE_ID_N6_BIG);
+  img_hr_numbers[7] = gbitmap_create_with_resource(RESOURCE_ID_N7_BIG);
+  img_hr_numbers[8] = gbitmap_create_with_resource(RESOURCE_ID_N8_BIG);
+  img_hr_numbers[9] = gbitmap_create_with_resource(RESOURCE_ID_N9_BIG);
+  img_hr_numbers[10] = gbitmap_create_with_resource(RESOURCE_ID_N10_BIG);
+
+  img_hr = gbitmap_create_with_resource(RESOURCE_ID_HR_BIG);
+  hr_layer = bitmap_layer_create(GRect(0, 0, BIG_W, BIG_H));
+  bitmap_layer_set_bitmap(hr_layer, img_hr);
+  layer_add_child(window_layer, bitmap_layer_get_layer(hr_layer));
 
   //
 
-  bmp_init_container(RESOURCE_ID_HR_BIG, &img_hr);
-  layer_add_child(&window.layer, &img_hr.layer.layer);
+  img_min_prefix = gbitmap_create_with_resource(RESOURCE_ID_NUMBER_SMALL);
+  min_prefix_layer = bitmap_layer_create(GRect(0, bounds.size.h - SMALL_H, SMALL_W, SMALL_H));
+  bitmap_layer_set_bitmap(min_prefix_layer, img_min_prefix);
+  layer_add_child(window_layer, bitmap_layer_get_layer(min_prefix_layer));
 
-  bmp_init_container(RESOURCE_ID_N0_BIG, &img_hr_numbers[0]);
-  bmp_init_container(RESOURCE_ID_N1_BIG, &img_hr_numbers[1]);
-  bmp_init_container(RESOURCE_ID_N2_BIG, &img_hr_numbers[2]);
-  bmp_init_container(RESOURCE_ID_N3_BIG, &img_hr_numbers[3]);
-  bmp_init_container(RESOURCE_ID_N4_BIG, &img_hr_numbers[4]);
-  bmp_init_container(RESOURCE_ID_N5_BIG, &img_hr_numbers[5]);
-  bmp_init_container(RESOURCE_ID_N6_BIG, &img_hr_numbers[6]);
-  bmp_init_container(RESOURCE_ID_N7_BIG, &img_hr_numbers[7]);
-  bmp_init_container(RESOURCE_ID_N8_BIG, &img_hr_numbers[8]);
-  bmp_init_container(RESOURCE_ID_N9_BIG, &img_hr_numbers[9]);
-  bmp_init_container(RESOURCE_ID_N10_BIG, &img_hr_numbers[10]);
+  img_min_numbers[0] = gbitmap_create_with_resource(RESOURCE_ID_N0_SMALL);
+  img_min_numbers[1] = gbitmap_create_with_resource(RESOURCE_ID_N1_SMALL);
+  img_min_numbers[2] = gbitmap_create_with_resource(RESOURCE_ID_N2_SMALL);
+  img_min_numbers[3] = gbitmap_create_with_resource(RESOURCE_ID_N3_SMALL);
+  img_min_numbers[4] = gbitmap_create_with_resource(RESOURCE_ID_N4_SMALL);
+  img_min_numbers[5] = gbitmap_create_with_resource(RESOURCE_ID_N5_SMALL);
+  img_min_numbers[6] = gbitmap_create_with_resource(RESOURCE_ID_N6_SMALL);
+  img_min_numbers[7] = gbitmap_create_with_resource(RESOURCE_ID_N7_SMALL);
+  img_min_numbers[8] = gbitmap_create_with_resource(RESOURCE_ID_N8_SMALL);
+  img_min_numbers[9] = gbitmap_create_with_resource(RESOURCE_ID_N9_SMALL);
+  img_min_numbers[10] = gbitmap_create_with_resource(RESOURCE_ID_N10_SMALL);
+
+  img_min = gbitmap_create_with_resource(RESOURCE_ID_MIN_SMALL);
+  min_layer = bitmap_layer_create(GRect(0, 0, SMALL_W, SMALL_H));
+  bitmap_layer_set_bitmap(min_layer, img_min);
+  layer_add_child(window_layer, bitmap_layer_get_layer(min_layer));
 
   for (int i = 0; i < 3; ++i)
   {
-    bitmap_layer_init(&hr_digits[i], GRect(0, 0, BIG_W, BIG_H));
-    layer_add_child(&window.layer, &hr_digits[i].layer);
+    hr_digits[i] = bitmap_layer_create(GRect(0, 0, BIG_W, BIG_H));
+    layer_add_child(window_layer, bitmap_layer_get_layer(hr_digits[i]));
+
+    min_digits[i] = bitmap_layer_create(GRect(0, 0, SMALL_W, SMALL_H));
+    layer_add_child(window_layer, bitmap_layer_get_layer(min_digits[i]));
   }
 
-  //
+  // Ensures time is displayed immediately
 
-  bmp_init_container(RESOURCE_ID_MIN_SMALL, &img_min);
-  layer_add_child(&window.layer, &img_min.layer.layer);
+  time_t timestamp = time(NULL);
+  struct tm *time = localtime(&timestamp);
+  handle_minute_tick(time, MINUTE_UNIT);
+}
 
-  bmp_init_container(RESOURCE_ID_N0_SMALL, &img_min_numbers[0]);
-  bmp_init_container(RESOURCE_ID_N1_SMALL, &img_min_numbers[1]);
-  bmp_init_container(RESOURCE_ID_N2_SMALL, &img_min_numbers[2]);
-  bmp_init_container(RESOURCE_ID_N3_SMALL, &img_min_numbers[3]);
-  bmp_init_container(RESOURCE_ID_N4_SMALL, &img_min_numbers[4]);
-  bmp_init_container(RESOURCE_ID_N5_SMALL, &img_min_numbers[5]);
-  bmp_init_container(RESOURCE_ID_N6_SMALL, &img_min_numbers[6]);
-  bmp_init_container(RESOURCE_ID_N7_SMALL, &img_min_numbers[7]);
-  bmp_init_container(RESOURCE_ID_N8_SMALL, &img_min_numbers[8]);
-  bmp_init_container(RESOURCE_ID_N9_SMALL, &img_min_numbers[9]);
-  bmp_init_container(RESOURCE_ID_N10_SMALL, &img_min_numbers[10]);
+static void window_unload(Window *window)
+{
+  bitmap_layer_destroy(period_layer);
+  bitmap_layer_destroy(hr_layer);
+  bitmap_layer_destroy(min_prefix_layer);
+  bitmap_layer_destroy(min_layer);
 
   for (int i = 0; i < 3; ++i)
   {
-    bitmap_layer_init(&min_digits[i], GRect(0, 0, SMALL_W, SMALL_H));
-    layer_add_child(&window.layer, &min_digits[i].layer);
+    bitmap_layer_destroy(hr_digits[i]);
+    bitmap_layer_destroy(min_digits[i]);
   }
 
-  // Ensures time is displayed immediately (will break if NULL tick event accessed).
-  // (This is why it's a good idea to have a separate routine to do the update itself.)
-  handle_minute_tick(ctx, NULL);
-}
+  gbitmap_destroy(img_morning);
+  gbitmap_destroy(img_noon);
+  gbitmap_destroy(img_night);
 
-void handle_deinit(AppContextRef ctx)
-{
-  (void)ctx;
+  gbitmap_destroy(img_hr);
+  gbitmap_destroy(img_min_prefix);
+  gbitmap_destroy(img_min);
 
-  bmp_deinit_container(&img_morning);
-  bmp_deinit_container(&img_noon);
-  bmp_deinit_container(&img_night);
-
-  bmp_deinit_container(&img_number);
-
-  bmp_deinit_container(&img_hr);
-  bmp_deinit_container(&img_min);
-
-  for (int i = 0; i < 11; ++i) {
-    bmp_deinit_container(&img_hr_numbers[i]);
-    bmp_deinit_container(&img_min_numbers[i]);
+  for (int i = 0; i <= 10; ++i)
+  {
+    gbitmap_destroy(img_hr_numbers[i]);
+    gbitmap_destroy(img_min_numbers[i]);
   }
 }
 
-void pbl_main(void *params)
+static void handle_init()
 {
-  PebbleAppHandlers handlers = {
+  window = window_create();
+  window_set_background_color(window, GColorBlack);
+  window_set_window_handlers(window, (WindowHandlers) {
+    .load = window_load,
+    .unload = window_unload,
+  });
+  window_stack_push(window, true);
 
-    .init_handler = &handle_init,
-    .deinit_handler = &handle_deinit,
+  tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
+}
 
-    // Handle time updates
-    .tick_info = {
-      .tick_handler = &handle_minute_tick,
-      .tick_units = MINUTE_UNIT
-    }
+static void handle_deinit()
+{
+  window_destroy(window);
+}
 
-  };
-  app_event_loop(params, &handlers);
+int main(void)
+{
+  handle_init();
+  app_event_loop();
+  handle_deinit();
 }
