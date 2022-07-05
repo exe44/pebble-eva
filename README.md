@@ -1,6 +1,7 @@
 pebble watch face inspired by Japanese anime "Neon Genesis Evangelion" :D
 
-![screenshot](https://assets.rebble.io/144x168/filters:upscale()/OsnxdjGiQvqjJUNyMK2A)
+![pebble-eva](https://user-images.githubusercontent.com/158320/177231718-d670e194-1b39-49c4-bb1e-bc35515bce50.jpg)
 
-[download .pbw (Japanese)](https://dl.dropboxusercontent.com/u/203504/pebble-eva.pbw)  
-[download .pbw (Chinese)](https://dl.dropboxusercontent.com/u/203504/pebble-eva-c.pbw)
+[download .pbw (Japanese)](https://github.com/exe44/pebble-eva/files/9042603/pebble-eva.pbw.zip)
+
+[download .pbw (Chinese)](https://github.com/exe44/pebble-eva/files/9042605/pebble-eva-c.pbw.zip)
